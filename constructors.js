@@ -87,7 +87,7 @@ function Spellcaster(name, health, mana){
    * @param  {number} damage  Amount of damage to deal to the spellcaster
    */
 Spellcaster.prototype.inflictDamage = function(damage){
-  if(this.health - damage <= 0){
+  if(this.health <= damage){
     this.health = 0;
     this.isAlive = false;
   }else{
@@ -149,18 +149,31 @@ Spellcaster.prototype.invoke = function(spell, target){
         //if enough mana
         if(spell.cost<=this.mana){
           //if mana returns true
-          if(this.spendMana()){
+          if(this.spendMana(spell.cost)){
             //inflictDamage
-            this.inflictDamage();
+            target.inflictDamage(spell.damage);
+            return true;
+          //no damage inflicted
+          }else{
+            return false;
           }
+        //no damage was inflicted
+        }else{
+          return false;
+        }
       //if target != Spellcaster
       }else{
         return false;
       }
-    }
     //if spell = Spell
-    else{
-      this.spendMana();
+    }else{
+      if(spell.cost<=this.mana){
+        this.spendMana(spell.cost);
+        return true;
+      //if no damage was inflicted
+      }else{
+        return false;
+      }
     }
   //if spell != Spell && spell != DamageSpell
   }else{
